@@ -16,10 +16,11 @@ pub struct MyHookProvider{}
 
 impl HookProvider for MyHookProvider{
 
+    // 定义 HookProvider 如何被加载，返回需要挂载的钩子列表。仅在该列表中的钩子会被回调到 HookProivder 服务。
     fn on_provider_loaded< 'life0, 'async_trait>(& 'life0 self,_request:tonic::Request<exhook::ProviderLoadedRequest> ,) ->  core::pin::Pin<Box<dyn core::future::Future<Output = Result<tonic::Response<exhook::LoadedResponse> ,tonic::Status> > + core::marker::Send+ 'async_trait> >where 'life0: 'async_trait,Self: 'async_trait {
-        println!("连接");
         let box_res = Box::new(async {
-            
+            info!("加载");
+            //创建需要hook的方法
             let rep = exhook::LoadedResponse{
                 hooks:vec![
                     exhook::HookSpec{
@@ -38,7 +39,10 @@ impl HookProvider for MyHookProvider{
             Pin::new_unchecked(box_res)
         }
     }
+
+    // 通知用户该 HookProvier 已经从 emqx 中卸载。
     fn on_provider_unloaded< 'life0, 'async_trait>(& 'life0 self,_request:tonic::Request<exhook::ProviderUnloadedRequest> ,) ->  core::pin::Pin<Box<dyn core::future::Future<Output = Result<tonic::Response<exhook::EmptySuccess> ,tonic::Status> > + core::marker::Send+ 'async_trait> >where 'life0: 'async_trait,Self: 'async_trait {
+        info!("卸载");
         let box_res = Box::new(async {
             let rep = exhook::EmptySuccess{
             };
